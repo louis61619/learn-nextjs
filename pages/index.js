@@ -1,65 +1,70 @@
+import React, { memo } from 'react'
+import axios from 'axios'
+
+import Link from 'next/link'
 import Head from 'next/head'
+import Router from 'next/router'
+
+import AppLayout from '../components/app-layout'
 import styles from '../styles/Home.module.css'
 
-export default function Home() {
+const Home = function(props) {
+
+  const { name, banners, recommends } = props
+
+  console.log(banners)
+
+  const recommendItemClick = (item) => {
+    Router.push({
+      pathname: '/recommend',
+      query: {
+        id: item
+      }
+    })
+  }
+
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>XXXX</title>
       </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
+      <h2 className={styles.title}>Home首頁</h2>
+      <h3>bnner</h3>
+      {
+        [1, 2, 3].map((item, index) => {
+          return (
+            // <Link key={item} href={`/recommend?id=${item}`}>
+            //   <div>{`推薦數據${item}`}</div>
+            // </Link>
+            <div key={item} onClick={e => recommendItemClick(item)}>{`推薦數據${item}`}</div>
+          )
+        })
+      }
+      {/* ul>li{推薦數據$}*3 */}
+      <div>
+        <h2>{name}</h2>
+        {
+          banners.map(item => {
+            return (
+              <div key={item.title}>{item.title}</div>
+            )
+          })
+        }
+      </div>
     </div>
   )
 }
+
+Home.getInitialProps = async (props) => {
+  const res = await axios({
+    url: "http://123.207.32.32:8000/home/multidata"
+  })
+  // console.log(res)
+  return {
+    name: "Renny",
+    banners: res.data.data.banner.list,
+    // recommends: res.data.data.recommend.list
+  }
+}
+
+export default Home
